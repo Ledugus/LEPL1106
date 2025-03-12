@@ -24,14 +24,29 @@ colors = {
     "pink": [1.0, 0.078, 0.576],
 }
 
+
 def convolution(x, nx, h, nh):
     """
-    A COMPLETER
+    Calcule la convolution entre deux signaux.
+
+    Argument :
+    ----------
+    x : np.array contenant les valeurs du signal d'entrée.
+
+    nx: np.array d'entiers consécutifs sur lesquels est itéré x.
+
+    h : np.array contenant le deuxième signal à convoluer
+
+    nh: np.array d'entiers consécutifs sur lesquels est itéré h.
+
+
+    Retourne :
+    ----------
+    (y, ny) : tuple contenant le signal de sortie et les indices correspondants.
     """
     y = np.zeros(x.size + h.size - 1)
     h = h[::-1]
     ny = np.arange(nx[0] + nh[0], nx[-1] + nh[-1] + 1)
-    # print(ny.shape, nh.shape, nx.shape)
 
     for i in range(len(y)):
         for j in range(len(h)):
@@ -62,30 +77,43 @@ def plot_convolution(x, nx, y, ny, fig_name):
     plot en format png et return une figure du graphe
     """
 
+    colors = {"black": "black", "blue": "blue", "red": "red"}
+
     plt.figure(figsize=(15, 8))
-    markerline, stemlines, baseline = plt.stem(ny, y)
 
-    plt.setp(baseline, color=colors["black"])
-    plt.setp(stemlines, color=colors["blue"], linewidth=3, linestyle="--")
-    plt.setp(markerline, color=colors["blue"], marker="o", markersize=10)
+    markerline, stemlines, baseline = plt.stem(
+        ny,
+        y,
+        linefmt=colors["blue"],
+        markerfmt="bo",
+        basefmt="k",
+        label="Signal de sortie y[n]",
+    )
 
-    plt.title("Signal de sortie y[n] (Convolution)")
+    markerline2, stemlines2, baseline2 = plt.stem(
+        nx,
+        x,
+        linefmt=colors["red"],
+        markerfmt="ro",
+        basefmt="k",
+        label="Signal d'entrée x[n]",
+    )
+
+    plt.title("Signal d'entrée x[n] et signal de sortie y[n]")
     plt.xlabel("n")
-    plt.ylabel("y[n]")
+    plt.ylabel("Amplitude")
+    plt.grid(True)
+    plt.legend()
 
     plt.savefig(fig_name + ".png", bbox_inches="tight")
-    # plt.show()
+
+    return
 
 
 def test_convolution():
     T = 4
     h = np.append(np.arange(1, T), np.arange(T, 0, -1))
     nh = np.arange(-(T - 1), T)
-    # N.B.:
-    # Nous vous fournissons ici des plots que nous considérons comme corrects.
-    # Lorsque nous vous demandons des plots, faites bien attention à respecter les consignes spécifiques à chaque figure.
-    # Si vous utilisez les variables définies au début du notebook (ex : labelsize), veillez à les re-définir sur INGInious.
-
     plt.figure(figsize=(12, 6))
     markerline, stemlines, baseline = plt.stem(nh, h)
 
@@ -105,10 +133,9 @@ def test_convolution():
     deltas = [-7, 2, 13, 18]  # position des deltas
     x[deltas - nx[0]] = 1
 
-
     (y, ny) = convolution(x, nx, h, nh)
     plot_convolution(x, nx, y, ny, "devoir_2/plot_convolution")
-    
+
 
 def window(n, n0, n1, A):
     """
@@ -140,10 +167,10 @@ def moving_average(x, M):
     Un tableau de même taille que x contenant la moyenne des M dernières valeurs
     """
     n = np.arange(len(x))
-    h = (1/M) * (window(n, 0, M, 1))
+    h = (1 / M) * (window(n, 0, M, 1))
 
-    return np.convolve(x, h)[:len(x)]
-    
+    return np.convolve(x, h)[: len(x)]
+
 
 if __name__ == "__main__":
     test_convolution()
