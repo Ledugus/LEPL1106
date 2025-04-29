@@ -23,8 +23,13 @@ def RouthTable(A, n):
     for i in range(2, n + 1):
         for j in range(tab.shape[1] - 1):
             tab[i, j] = (
-                tab[i - 2, 0] * tab[i - 1, j + 1] - tab[i - 1, 0] * tab[i - 2, j + 1]
-            ) / tab[i - 1, 0]
+                -1
+                * (
+                    tab[i - 2, 0] * tab[i - 1, j + 1]
+                    - tab[i - 1, 0] * tab[i - 2, j + 1]
+                )
+                / tab[i - 1, 0]
+            )
 
     return tab  # Retourne le tableau de Routh
 
@@ -49,15 +54,22 @@ def respectRHcriterion(RouthTab):
     return True  # A MODIFIER : Retourne True si le critère est respecté et False sinon
 
 
-def test_routh_table():
-    poly = [1, 2, 3, 4, 5, 6, 7]
-    print("Test du tableau de Routh")
-    print("Polynôme : ", poly)
-    n = len(poly) - 1
-    tab = RouthTable(poly, n)
-    print("Tableau de Routh :")
-    print(tab)
+def test_stability_criterion():
+    A1 = [1, 2, 3, 3, 1]
+    RouthTab1 = RouthTable(A1, len(A1) - 1)
+    print(RouthTab1)
+    stable = respectRHcriterion(RouthTab1)
+
+    print("Le système A1 est stable :", stable)
+
+    # Système instable
+    A2 = [1, 4, 2, 5, 1, 3, 2]
+    RouthTab2 = RouthTable(A2, len(A2) - 1)
+    print(RouthTab2)
+    unstable = respectRHcriterion(RouthTab2)
+
+    print("Le système A2 est stable :", unstable)
 
 
 if __name__ == "__main__":
-    test_routh_table()
+    test_stability_criterion()
